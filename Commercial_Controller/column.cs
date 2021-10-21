@@ -14,6 +14,7 @@ namespace Commercial_Controller
     bool _isBasement;
     public List <CallButton> callButtonsList;
     int amountOfFloors;
+    int callButtonID = 1;
 
     
         
@@ -29,6 +30,27 @@ namespace Commercial_Controller
             this.elevatorsList = new List <int> ();
             this.callButtonsList = new List <CallButton>();
             this.createElevators(amountOfFloors,_amountOfElevators);
+            this.createCallButtons(amountOfFloors,_isBasement);
+        }
+
+        public void createCallButtons(int amountOfFloors, bool _isBasement){
+            if (_isBasement){
+                int buttonFloor = -1;
+                for (int i = 0; i<amountOfFloors;i++){
+                    CallButton callbutton = new CallButton (callButtonID,"off","up",buttonFloor);
+                    this.callButtonsList.Add(callbutton);
+                    --buttonFloor;
+                    ++ callButtonID;
+                }
+            }else {
+                int buttonFloor = 1;
+                for (int i =0; i<amountOfFloors;i++){
+                    CallButton callButton = new CallButton (callButtonID,"off","Down",buttonFloor);
+                    this.callButtonsList.Add(callButton);
+                    ++buttonFloor;
+                    ++callButtonID;
+                }
+            }
         }
 
         public void createElevators(int amountOfFloors,int _amountOfElevators){
@@ -40,13 +62,35 @@ namespace Commercial_Controller
 
             }
         }
+      //Simulate when a user press a button on a floor to go back to the first floor
+        public Elevator requestElevator(int _requestedFloor, string _direction){
+            var elevator = this.findElevator(_requestedFloor,_direction);
+            elevator.addNewRequest(_requestedFloor);
+            elevator.move();
+            elevator.addNewRequest(1);
+            elevator.move();
 
-
-        //Simulate when a user press a button on a floor to go back to the first floor
-        public Elevator requestElevator(int userPosition, string direction)
-        {
-            
         }
-
+        public Elevator findElevator(int _requestedFloor, string _direction){
+            object bestElevator;
+            int bestScore = 6;
+            int referenceGap = 1000000;
+            List <object> bestElevatorInformations;
+            if (_requestedFloor == 1){
+                foreach( var elevator in this.elevatorsList){
+                    if ((elevator.currentFloor == 1) && (elevator.status == "stopped")) {
+                        bestElevatorInformations = this.checkIfElevatorIsBetter(1,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
+                    } else if ((elevator.currentFloor == 1) && (elevator.status == "Idle")){
+                         bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
+                    }else if ((1 > elevator.currentFloor) && (elevator._direction == "Up")){
+                         bestElevatorInformations = this.checkIfElevatorIsBetter(3,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
+                    }else if ((1 < elevator.currentFloor) && (elevator._direction == "Down")){
+                         bestElevatorInformations = this.checkIfElevatorIsBetter(3,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
+                    }else if (elevator.status == "Idle"){
+                         bestElevatorInformations = this.checkIfElevatorIsBetter(4,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
+                    }else {
+                        bestElevatorInformations = this.checkIfElevatorIsBetter(5,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
+                    }
     }
 }
+}}}

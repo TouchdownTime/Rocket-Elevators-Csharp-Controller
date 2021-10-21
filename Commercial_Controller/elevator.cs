@@ -6,7 +6,7 @@ namespace Commercial_Controller
     public class Elevator
     {
         
-        int elevatorID = 1;
+        string elevatorID = "1";
         string status;
         int amountOfFloors;
         int currentFloor;
@@ -19,6 +19,7 @@ namespace Commercial_Controller
             this.currentFloor = currentFloor;
 
         }
+
         public void move()
         {
 
