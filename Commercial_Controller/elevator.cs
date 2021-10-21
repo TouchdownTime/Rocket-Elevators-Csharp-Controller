@@ -31,7 +31,7 @@ namespace Commercial_Controller
             this.screenDisplay = 0;
             Door door = new Door (1,"Closed");
             this.door = door;
-            
+            this.completedRequestsList = new List<int>();
 
         }
 
@@ -39,7 +39,6 @@ namespace Commercial_Controller
         {
             while (floorRequestsList.Count != 0 ){
                 int userPosition = floorRequestsList[0];
-                Console.WriteLine(userPosition);
                 this.status = "moving";
                 if ( this.currentFloor < userPosition){
                     this.direction = "up";
@@ -58,8 +57,7 @@ namespace Commercial_Controller
                 }
                 this.status = "stopped";
                 this.operateDoors();
-                this.completedRequestsList.Add(userPosition);
-                Console.WriteLine(completedRequestsList.Count);
+                this.completedRequestsList.Add(floorRequestsList[0]);
                 this.floorRequestsList.RemoveAt(0);
             }
             this.status ="idle";
