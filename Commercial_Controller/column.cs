@@ -5,7 +5,7 @@ namespace Commercial_Controller
 {
     public class Column
     { 
-    public List <int> elevatorsList;
+    public List <Elevator> elevatorsList;
     string _ID;
     string _status;
     int _amountOfBasements;
@@ -27,7 +27,7 @@ namespace Commercial_Controller
             this._amountOfElevators =_amountOfElevators;
             this._isBasement = _isBasement;
             this.servedFloorsList = _servedFloors;
-            this.elevatorsList = new List <int> ();
+            this.elevatorsList = new List <Elevator> ();
             this.callButtonsList = new List <CallButton>();
             this.createElevators(amountOfFloors,_amountOfElevators);
             this.createCallButtons(amountOfFloors,_isBasement);
@@ -72,14 +72,14 @@ namespace Commercial_Controller
 
         }
         public Elevator findElevator(int _requestedFloor, string _direction){
-            object bestElevator;
+            Elevator bestElevator;
             int bestScore = 6;
             int referenceGap = 1000000;
-            List <object> bestElevatorInformations;
+            Tuple <Elevator,int,int> bestElevatorInformations;
             if (_requestedFloor == 1){
-                foreach( var elevator in this.elevatorsList){
+                foreach(  Elevator elevator in this.elevatorsList){
                     if ((elevator.currentFloor == 1) && (elevator.status == "stopped")) {
-                        bestElevatorInformations = this.checkIfElevatorIsBetter(1,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
+                         bestElevatorInformations = this.checkIfElevatorIsBetter(1,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
                     } else if ((elevator.currentFloor == 1) && (elevator.status == "Idle")){
                          bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
                     }else if ((1 > elevator.currentFloor) && (elevator._direction == "Up")){
@@ -91,6 +91,54 @@ namespace Commercial_Controller
                     }else {
                         bestElevatorInformations = this.checkIfElevatorIsBetter(5,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
                     }
-    }
-}
-}}}
+                      bestElevator = bestElevatorInformations.Item1;
+                      referenceGap = bestElevatorInformations.Item2;
+                      bestScore = bestElevatorInformations.Item3;
+                }
+                
+            }else 
+                {
+                     foreach(  Elevator elevator in elevatorsList){
+                        if ((elevator.currentFloor == 1) && (elevator.status == "stopped")&& (elevator._direction == _direction)) {
+                        bestElevatorInformations = this.checkIfElevatorIsBetter(1,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
+                     }else if ((_requestedFloor > elevator.currentFloor ) && (elevator._direction == "Up")&& (_direction == "Up")) {
+                        bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);                
+                    }else if ((_requestedFloor < elevator.currentFloor ) && (elevator._direction == "Up")&& (_direction == "Up")) {
+                        bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
+                    }else if ((_requestedFloor < elevator.currentFloor ) && (elevator._direction == "Down")&& (_direction == "Down")) {
+                        bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
+                    }else if (elevator.status == "Idle") {
+                        bestElevatorInformations = this.checkIfElevatorIsBetter(4,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
+                    }else{
+                        bestElevatorInformations = checkIfElevatorIsBetter(5,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
+                    }
+                    bestElevator = bestElevatorInformations.Item1;
+                    referenceGap = bestElevatorInformations.Item2;
+                    bestScore = bestElevatorInformations.Item3;
+                    }
+
+                    }
+                        return bestElevator;
+                    }
+            public Tuple <Elevator,int,int> checkIfElevatorIsBetter(
+                   int scoreToCheck, Elevator newElevator,int bestScore, int referenceGap, Elevator bestElevator, int _requestedFloor)
+                {    if (scoreToCheck < bestScore){
+                    bestScore = scoreToCheck;
+                    bestElevator = newElevator;
+                    referenceGap = Math.Abs(newElevator.currentFloor - _requestedFloor);
+                } else {
+                    if (bestScore == scoreToCheck){
+                        int gap = Math.Abs(newElevator.currentFloor - _requestedFloor);
+                          if (referenceGap > gap){
+                              bestElevator=newElevator;
+                              referenceGap = gap;
+                            }
+                    }
+                }
+                        var bestElevatorInformations = Tuple.Create(bestElevator,referenceGap,bestScore);
+                        return bestElevatorInformations;
+
+                    }
+                  
+
+}}

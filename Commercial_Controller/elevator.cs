@@ -6,10 +6,14 @@ namespace Commercial_Controller
     public class Elevator
     {
         
-        string elevatorID = "1";
-        string status;
-        int amountOfFloors;
-        int currentFloor;
+    public string elevatorID = "1";
+    public string status;
+    public int amountOfFloors;
+    public int currentFloor;
+
+    public Elevator elevator;
+
+    public string _direction;
 
         public Elevator(string _elevatorID, string status, int amountOfFloors,int currentFloor)
         {
@@ -17,6 +21,7 @@ namespace Commercial_Controller
             this.status = status;
             this.amountOfFloors = amountOfFloors;
             this.currentFloor = currentFloor;
+            this._direction = "Idle";
 
         }
 
