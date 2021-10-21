@@ -41,7 +41,7 @@ namespace Commercial_Controller
         public void createBasementFloorRequestButtons(int _amountOfBasements){
             int buttonFloor = -1;
             for (int i =0; i<_amountOfBasements;i++){
-                FloorRequestButton floorRequestButton = new FloorRequestButton (floorRequestButtonID,"off",buttonFloor,"Down");
+                FloorRequestButton floorRequestButton = new FloorRequestButton (floorRequestButtonID,"off",buttonFloor,"down");
                 floorRequestButtonsList.Add(floorRequestButton);
                 --buttonFloor;
                 ++floorRequestButtonID;
@@ -64,7 +64,7 @@ namespace Commercial_Controller
             public void createFloorRequestButtons(int _amountOfFloors){
                  int buttonFloor = 1;
                 for (int i =0; i<_amountOfFloors;i++){
-                    FloorRequestButton floorRequestButton = new FloorRequestButton (floorRequestButtonID,"off",buttonFloor,"Up");
+                    FloorRequestButton floorRequestButton = new FloorRequestButton (floorRequestButtonID,"off",buttonFloor,"up");
                     floorRequestButtonsList.Add(floorRequestButton);
                     ++buttonFloor;
                     ++floorRequestButtonID;
@@ -90,22 +90,22 @@ namespace Commercial_Controller
 
             }
 
-        public Column findBestColumn(int _requestedFloor){
+        public Column findBestColumn(int userPosition){
         foreach(Column column in this.columnsList){
-            if (column.servedFloorsList.Contains(_requestedFloor)){
+            if (column.servedFloorsList.Contains(userPosition)){
                 return column;
             }
         }
                 return null;
         }
         //Simulate when a user press a button at the lobby
-        public (Column,Elevator) assignElevator(int _requestedFloor, string _direction)
+        public (Column,Elevator) assignElevator(int userPosition, string _direction)
         {
-            var column = this.findBestColumn(_requestedFloor);
+            var column = this.findBestColumn(userPosition);
             var elevator = column.findElevator(1,_direction);
             elevator.addNewRequest(1);
             elevator.move();
-            elevator.addNewRequest(_requestedFloor);
+            elevator.addNewRequest(userPosition);
             elevator.move();   
             return (column,elevator);
             

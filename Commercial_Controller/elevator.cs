@@ -1,4 +1,4 @@
-using System.Threading;
+using System;
 using System.Collections.Generic;
 
 namespace Commercial_Controller
@@ -26,43 +26,47 @@ namespace Commercial_Controller
             this.status = status;
             this.amountOfFloors = amountOfFloors;
             this.currentFloor = currentFloor;
-            this.direction = "Idle";
+            this.direction = "idle";
             this.floorRequestsList = new List <int>();
             this.screenDisplay = 0;
             Door door = new Door (1,"Closed");
+            this.door = door;
+            
 
         }
 
         public void move()
         {
             while (floorRequestsList.Count != 0 ){
-                int destination = floorRequestsList[0];
+                int userPosition = floorRequestsList[0];
+                Console.WriteLine(userPosition);
                 this.status = "moving";
-                if ( this.currentFloor < destination){
-                    this.direction = "Up";
+                if ( this.currentFloor < userPosition){
+                    this.direction = "up";
                     this.sortFloorList();
-                    while (this.currentFloor < destination){
+                    while (this.currentFloor < userPosition){
                         ++this.currentFloor;
                         this.screenDisplay = this.currentFloor;
                     }
-                }else if (this.currentFloor > destination){
-                    this.direction = "Down";
+                }else if (this.currentFloor > userPosition){
+                    this.direction = "down";
                     this.sortFloorList();
-                    while (this.currentFloor > destination){
+                    while (this.currentFloor > userPosition){
                         --this.currentFloor;
                         this.screenDisplay = this.currentFloor;
                     }
                 }
-                this.status = "Stopped";
+                this.status = "stopped";
                 this.operateDoors();
-                completedRequestsList.Add(destination);
-                floorRequestsList.RemoveAt(0);
+                this.completedRequestsList.Add(userPosition);
+                Console.WriteLine(completedRequestsList.Count);
+                this.floorRequestsList.RemoveAt(0);
             }
-            this.status ="Idle";
+            this.status ="idle";
         }
 
         public void sortFloorList (){
-            if (this.direction == "Up"){
+            if (this.direction == "up"){
                 this.floorRequestsList.Sort();
             }else {
                 this.floorRequestsList.Sort();
@@ -74,18 +78,18 @@ namespace Commercial_Controller
            this.door.status = "Opened";
             // wait 5 seconds
             this.door.status = "Closed";
-
+        
         }
-        public void addNewRequest(int _requestFloor){
+        public void addNewRequest(int userPosition){
 
-            if (!floorRequestsList.Contains(_requestFloor)){
-                floorRequestsList.Add(_requestFloor);
+            if (!floorRequestsList.Contains(userPosition)){
+                floorRequestsList.Add(userPosition);
             }
-            if (this.currentFloor < _requestFloor){
-                this.direction = "Up";
+            if (this.currentFloor < userPosition){
+                this.direction = "up";
             }
-            if (this.currentFloor > _requestFloor){
-                this.direction = "Down";
+            if (this.currentFloor > userPosition){
+                this.direction = "down";
             }
         }
         
