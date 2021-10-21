@@ -6,21 +6,21 @@ namespace Commercial_Controller
     public class Column
     { 
     public List <Elevator> elevatorsList;
-    string _ID;
-    string _status;
-    int _amountOfBasements;
-    int _amountOfElevators;
+   public  string ID;
+    public string _status;
+    public int _amountOfBasements;
+    public int _amountOfElevators;
     public List <int> servedFloorsList;
-    bool _isBasement;
+    public bool _isBasement;
     public List <CallButton> callButtonsList;
-    int amountOfFloors;
-    int callButtonID = 1;
+    public int amountOfFloors;
+    public int callButtonID = 1;
 
     
         
-        public Column(string _ID, string _status, int _amountOfBasements, int _amountOfElevators, List<int> _servedFloors, bool _isBasement)
+        public Column(string ID, string _status, int _amountOfBasements, int _amountOfElevators, List<int> _servedFloors, bool _isBasement)
         {
-            this._ID = _ID;
+            this.ID = ID;
             this._status =_status;
             this._amountOfBasements = _amountOfBasements;
             this.amountOfFloors = _amountOfBasements;
@@ -63,16 +63,17 @@ namespace Commercial_Controller
             }
         }
       //Simulate when a user press a button on a floor to go back to the first floor
-        public Elevator requestElevator(int _requestedFloor, string _direction){
-            var elevator = this.findElevator(_requestedFloor,_direction);
+        public Elevator requestElevator(int _requestedFloor, string direction){
+            var elevator = this.findElevator(_requestedFloor,direction);
             elevator.addNewRequest(_requestedFloor);
             elevator.move();
             elevator.addNewRequest(1);
             elevator.move();
+            return (elevator);
 
         }
-        public Elevator findElevator(int _requestedFloor, string _direction){
-            Elevator bestElevator;
+        public Elevator findElevator(int _requestedFloor, string direction){
+            Elevator bestElevator = null;
             int bestScore = 6;
             int referenceGap = 1000000;
             Tuple <Elevator,int,int> bestElevatorInformations;
@@ -82,9 +83,9 @@ namespace Commercial_Controller
                          bestElevatorInformations = this.checkIfElevatorIsBetter(1,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
                     } else if ((elevator.currentFloor == 1) && (elevator.status == "Idle")){
                          bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
-                    }else if ((1 > elevator.currentFloor) && (elevator._direction == "Up")){
+                    }else if ((1 > elevator.currentFloor) && (elevator.direction == "Up")){
                          bestElevatorInformations = this.checkIfElevatorIsBetter(3,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
-                    }else if ((1 < elevator.currentFloor) && (elevator._direction == "Down")){
+                    }else if ((1 < elevator.currentFloor) && (elevator.direction == "Down")){
                          bestElevatorInformations = this.checkIfElevatorIsBetter(3,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
                     }else if (elevator.status == "Idle"){
                          bestElevatorInformations = this.checkIfElevatorIsBetter(4,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
@@ -99,13 +100,13 @@ namespace Commercial_Controller
             }else 
                 {
                      foreach(  Elevator elevator in elevatorsList){
-                        if ((elevator.currentFloor == 1) && (elevator.status == "stopped")&& (elevator._direction == _direction)) {
+                        if ((elevator.currentFloor == 1) && (elevator.status == "stopped")&& (elevator.direction == direction)) {
                         bestElevatorInformations = this.checkIfElevatorIsBetter(1,elevator,bestScore,referenceGap,bestElevator,_requestedFloor); 
-                     }else if ((_requestedFloor > elevator.currentFloor ) && (elevator._direction == "Up")&& (_direction == "Up")) {
+                     }else if ((_requestedFloor > elevator.currentFloor ) && (elevator.direction == "Up")&& (direction == "Up")) {
                         bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);                
-                    }else if ((_requestedFloor < elevator.currentFloor ) && (elevator._direction == "Up")&& (_direction == "Up")) {
+                    }else if ((_requestedFloor < elevator.currentFloor ) && (elevator.direction == "Up")&& (direction == "Up")) {
                         bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
-                    }else if ((_requestedFloor < elevator.currentFloor ) && (elevator._direction == "Down")&& (_direction == "Down")) {
+                    }else if ((_requestedFloor < elevator.currentFloor ) && (elevator.direction == "Down")&& (direction == "Down")) {
                         bestElevatorInformations = this.checkIfElevatorIsBetter(2,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
                     }else if (elevator.status == "Idle") {
                         bestElevatorInformations = this.checkIfElevatorIsBetter(4,elevator,bestScore,referenceGap,bestElevator,_requestedFloor);
@@ -139,6 +140,6 @@ namespace Commercial_Controller
                         return bestElevatorInformations;
 
                     }
-                  
+
 
 }}

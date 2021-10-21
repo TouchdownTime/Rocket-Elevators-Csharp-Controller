@@ -5,18 +5,18 @@ namespace Commercial_Controller
 {
     public class Battery
     {
-        int columnID = 1;
-        int elevatorID =1;
-        int floorRequestButtonID =1;
-        int floor;
-        int _amountOfColumns;
-        int _amountOfFloors;
-        int _amountOfElevatorPerColumn;
-        int _ID;
-        int _amountOfBasements;
-        string status;
-        List <Column> columnsList;
-        List <FloorRequestButton> floorRequestButtonsList;
+        public int columnID = 1;
+        public int elevatorID =1;
+        public int floorRequestButtonID =1;
+        public int floor;
+        public int _amountOfColumns;
+        public int _amountOfFloors;
+        public int _amountOfElevatorPerColumn;
+        public int _ID;
+        public int _amountOfBasements;
+        public string status;
+        public List <Column> columnsList;
+        public List <FloorRequestButton> floorRequestButtonsList;
         public Battery(int _ID, int _amountOfColumns, int _amountOfFloors, int _amountOfBasements, int _amountOfElevatorPerColumn)
         {
             this._ID = _ID;
@@ -87,19 +87,23 @@ namespace Commercial_Controller
             }
 
         public Column findBestColumn(int _requestedFloor){
-        foreach(var column in this.columnsList){
+        foreach(Column column in this.columnsList){
             if (column.servedFloorsList.Contains(_requestedFloor)){
                 return column;
             }
         }
+                return null;
         }
         //Simulate when a user press a button at the lobby
-        public (Column, Elevator) assignElevator(int _requestedFloor, string _direction)
+        public (Column,Elevator) assignElevator(int _requestedFloor, string _direction)
         {
             var column = this.findBestColumn(_requestedFloor);
-            var elevator = this.findElevator(1,_direction);
-
-
+            var elevator = column.findElevator(1,_direction);
+            elevator.addNewRequest(1);
+            elevator.move();
+            elevator.addNewRequest(_requestedFloor);
+            elevator.move();   
+            return (column,elevator);
             
          }
     }
