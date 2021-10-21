@@ -17,6 +17,8 @@ namespace Commercial_Controller
         public string status;
         public List <Column> columnsList;
         public List <FloorRequestButton> floorRequestButtonsList;
+
+        public List <int> servedFloors;
         public Battery(int _ID, int _amountOfColumns, int _amountOfFloors, int _amountOfBasements, int _amountOfElevatorPerColumn)
         {
             this._ID = _ID;
@@ -30,59 +32,61 @@ namespace Commercial_Controller
             if (_amountOfBasements > 0){
                 this.createBasementFloorRequestButtons( _amountOfBasements);
                 this.createBasementColumn(_amountOfBasements,_amountOfElevatorPerColumn);
-                --_amountOfColumns;
+                --_amountOfColumns; // confirm it reduces _amountOfColumns by 1
             }
             this.createFloorRequestButtons(_amountOfFloors);
             this.createColumns(_amountOfColumns,_amountOfFloors,_amountOfBasements,_amountOfElevatorPerColumn);
-
         }
-
+            // Tested and working createBasementFloorRequestButtons ,Responsible for all basement request buttons outside elevator
         public void createBasementFloorRequestButtons(int _amountOfBasements){
             int buttonFloor = -1;
-            for (int i =0; i>_amountOfBasements;i++){
+            for (int i =0; i<_amountOfBasements;i++){
                 FloorRequestButton floorRequestButton = new FloorRequestButton (floorRequestButtonID,"off",buttonFloor,"Down");
                 floorRequestButtonsList.Add(floorRequestButton);
                 --buttonFloor;
                 ++floorRequestButtonID;
-            }
-        }
+            } 
+            
+        }       // Tested CreateBasementColumn, everything works. This will create the basement column that will service the building. 
             public void createBasementColumn (int _amountOfBasements, int _amountOfElevatorPerColumn){
                 List <int> servedFloors = new List<int>();
                 int floor = -1;
-                for (int i=0; i>_amountOfBasements;i++){
+                for (int i=0; i<_amountOfBasements;i++){
                     servedFloors.Add(floor);
                     --floor;
                 }
                 string column_ID = columnID.ToString();
-                Column column = new Column (column_ID,"online",_amountOfBasements,_amountOfElevatorPerColumn,servedFloors,true);
+                Column column = new Column (column_ID,_amountOfBasements,_amountOfFloors,_amountOfElevatorPerColumn,servedFloors,true);
                 columnsList.Add(column);
                 ++columnID;
         }
+        // SHould be working fine. Not sure on final number to verify
             public void createFloorRequestButtons(int _amountOfFloors){
                  int buttonFloor = 1;
-                for (int i =0; i>_amountOfFloors;i++){
+                for (int i =0; i<_amountOfFloors;i++){
                     FloorRequestButton floorRequestButton = new FloorRequestButton (floorRequestButtonID,"off",buttonFloor,"Up");
                     floorRequestButtonsList.Add(floorRequestButton);
                     ++buttonFloor;
                     ++floorRequestButtonID;
-            }
-            }
+            } 
+            }// verfied and working properly. createColumns returns the correct instances. this is used to create all columns not in basement.
             public void createColumns(int _amountOfColumns,int _amountOfFloors,int _amountOfBasements, int _amountOfElevatorPerColumn){
                 int amountOfFloorsPerColumn = (int)Math.Ceiling(Convert.ToDecimal(_amountOfFloors/_amountOfColumns));
                 int floor = 1;
-                for (int i =0; i>_amountOfColumns;i++){
+                for (int i =0; i<_amountOfColumns;i++){
                     List <int> servedFloors = new List<int>();
-                    for (int x = 0; x > amountOfFloorsPerColumn; x++){
+                    for (int x = 0; x < amountOfFloorsPerColumn; x++){
                         if (floor <= _amountOfFloors){
                             servedFloors.Add(floor);
                             ++floor;
                         }
                     }
                     string column_ID = columnID.ToString();
-                    Column column = new Column (column_ID,"online",_amountOfFloors,_amountOfElevatorPerColumn,servedFloors,false);
+                    Column column = new Column (column_ID,_amountOfBasements,_amountOfFloors,_amountOfElevatorPerColumn,servedFloors,false);
                     columnsList.Add(column);
                     ++columnID;
                 }
+                             
 
             }
 

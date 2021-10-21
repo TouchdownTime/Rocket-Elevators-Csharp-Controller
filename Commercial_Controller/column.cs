@@ -9,7 +9,7 @@ namespace Commercial_Controller
    public  string ID;
     public string _status;
     public int _amountOfBasements;
-    public int _amountOfElevators;
+    public int _amountOfElevatorsPerColumn;
     public List <int> servedFloorsList;
     public bool _isBasement;
     public List <CallButton> callButtonsList;
@@ -18,25 +18,25 @@ namespace Commercial_Controller
 
     
         
-        public Column(string ID, string _status, int _amountOfBasements, int _amountOfElevators, List<int> _servedFloors, bool _isBasement)
+        public Column(string ID, int _amountOfBasements,int _amountOfFloors, int _amountOfElevatorsPerColumn, List<int> _servedFloors, bool _isBasement)
         {
             this.ID = ID;
-            this._status =_status;
+            this._status ="Idle";
             this._amountOfBasements = _amountOfBasements;
-            this.amountOfFloors = _amountOfBasements;
-            this._amountOfElevators =_amountOfElevators;
+            this.amountOfFloors = _amountOfFloors;
+            this._amountOfElevatorsPerColumn =_amountOfElevatorsPerColumn;
             this._isBasement = _isBasement;
             this.servedFloorsList = _servedFloors;
             this.elevatorsList = new List <Elevator> ();
             this.callButtonsList = new List <CallButton>();
-            this.createElevators(amountOfFloors,_amountOfElevators);
+            this.createElevators(amountOfFloors,_amountOfElevatorsPerColumn);
             this.createCallButtons(amountOfFloors,_isBasement);
         }
-
-        public void createCallButtons(int amountOfFloors, bool _isBasement){
+        //createCallButtons seems to work ok , however I am unsure if it should be creating 60 or 66 ( 1st scenario)
+        public void createCallButtons(int _amountOfFloors, bool _isBasement){
             if (_isBasement){
                 int buttonFloor = -1;
-                for (int i = 0; i<amountOfFloors;i++){
+                for (int i = 0; i <_amountOfFloors;i++){
                     CallButton callbutton = new CallButton (callButtonID,"off","up",buttonFloor);
                     this.callButtonsList.Add(callbutton);
                     --buttonFloor;
@@ -44,27 +44,29 @@ namespace Commercial_Controller
                 }
             }else {
                 int buttonFloor = 1;
-                for (int i =0; i<amountOfFloors;i++){
+                                      
+                for (int i =0; i<_amountOfFloors;i++){
                     CallButton callButton = new CallButton (callButtonID,"off","Down",buttonFloor);
                     this.callButtonsList.Add(callButton);
                     ++buttonFloor;
                     ++callButtonID;
                 }
-            }
+            }         
         }
-
-        public void createElevators(int amountOfFloors,int _amountOfElevators){
+            // createElevsators puts 5 objects into elevatorsList ( scenario1) This will create the elevators needed for each column 
+        public void createElevators(int amountOfFloors,int _amountOfElevatorsPerColumn){
             int elevatorID = 1;
-            for (int i =0;i <_amountOfElevators;i++ ){
+            for (int i =0;i < _amountOfElevatorsPerColumn;i++ ){
                 string elevatoriD = elevatorID.ToString();
                 Elevator elevator = new Elevator (elevatoriD,"Idle",amountOfFloors,1);
+                elevatorsList.Add(elevator);
                 ++elevatorID;
-
-            }
+            }             
         }
       //Simulate when a user press a button on a floor to go back to the first floor
         public Elevator requestElevator(int _requestedFloor, string direction){
             var elevator = this.findElevator(_requestedFloor,direction);
+            Console.WriteLine(elevator.direction);
             elevator.addNewRequest(_requestedFloor);
             elevator.move();
             elevator.addNewRequest(1);

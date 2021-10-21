@@ -15,6 +15,7 @@ namespace Commercial_Controller
 
     public string direction;
    public  List<int> floorRequestsList;
+   public List <int> completedRequestsList;
    public Door door;
 
     public int screenDisplay;
@@ -54,6 +55,7 @@ namespace Commercial_Controller
                 }
                 this.status = "Stopped";
                 this.operateDoors();
+                completedRequestsList.Add(destination);
                 floorRequestsList.RemoveAt(0);
             }
             this.status ="Idle";
@@ -69,7 +71,7 @@ namespace Commercial_Controller
         }
 
         public void operateDoors(){
-            this.door.status = "Opened";
+           this.door.status = "Opened";
             // wait 5 seconds
             this.door.status = "Closed";
 
